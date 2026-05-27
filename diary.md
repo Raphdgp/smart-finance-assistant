@@ -1,176 +1,117 @@
 # 📓 Developer's Diary – AI Collaboration Guide
 
-This file shows sample entries for your **Developer's Diary**. You must document your AI collaboration throughout the project development. Each entry should have:
-- **Artifact**: a screenshot, GIF, or snippet of your AI interaction
-- **Context**: one-sentence description of your goal
-- **Reflection**: analysis of what happened, what you learned, and how you improved the solution
+## Entry 1 – Environment Setup and Notebook Organisation
 
-**Key Principle**: You're directing AI like a junior developer - always review, critique, and improve their suggestions.
+**Artifact:**  
+See `AI-EVIDENCE/session_01_setup_environment.md`.
 
----
+**Context:**  
+I needed to set up the Smart Finance Assistant repository, configure Python, and organise the starter notebook before building the application.
 
-## Foundation Skills Examples
+**My Prompt:**  
+I asked AI for a step-by-step setup process covering the GitHub repository, VS Code, Python environment, package installation, notebook kernel selection, and initial notebook organisation.
 
-### Entry 1 – Effective AI Prompting for Business Data
-**Artifact:** Screenshot of ChatGPT conversation about analyzing spending data.
+**AI Response Summary:**  
+AI guided me through opening the forked repository in VS Code, checking Python versions, using Python 3.12, creating a virtual environment, installing packages, selecting the notebook kernel, and running a small import test. AI also helped reorganise the notebook so that the implementation followed the starter notebook’s existing structure.
 
-**My Initial Prompt:** "Help me analyze CSV data with pandas"
+**My Critique/Improvement:**  
+I questioned the setup process when it became more complicated than expected. When PowerShell blocked virtual environment activation, I avoided changing Windows security settings and used the virtual environment’s Python executable directly instead. I also noticed that adding code cells randomly would make the notebook messy, so I asked for the work to be integrated into the existing notebook sections.
 
-**My Improved Prompt:** "I'm building a Smart Finance Assistant. I have a CSV with Date, Amount, Category, Description columns. The Amount has dollar signs that need cleaning. I want to calculate total spending by category and format results for a business presentation. Please write pandas code with clear comments."
+**Result:**  
+The repository opened correctly in VS Code, the required packages were installed, the notebook kernel worked, and the project structure was cleaned up before the main implementation began.
 
-**Context:** Learning to write specific, business-focused AI prompts.
+**Reflection:**  
+This step helped me understand that environment setup and notebook organisation are part of the programming process. A working notebook depends on the correct Python version, installed packages, kernel selection, and execution order. I also learned that AI suggestions need to be checked and adapted to the actual development environment rather than followed mechanically.
 
-**Reflection:** The first prompt gave me generic pandas code. The improved prompt with business context got me professional, commented code that handled data cleaning. I learned that AI needs clear business context and output requirements to give useful results. Now I always include: data structure, business purpose, and desired output format.
+## Entry 2 – CSV Loading, Cleaning, and Spending Analysis
 
----
+**Artifact:**  
+See `AI-EVIDENCE/session_02_data_analysis.md`.
 
-### Entry 2 – Critiquing and Improving AI Code
-**Artifact:** Before/after screenshots of AI-generated spending analysis code.
+**Context:**  
+I needed to build the transaction data foundation for Budget Buddy by loading the CSV file, cleaning it, calculating spending totals, handling refunds, and identifying the largest spending categories.
 
-**Context:** AI gave me complex code that was hard to understand for my transaction analysis.
+**My Prompt:**  
+I asked AI to help inspect the transaction CSV, decide which dataset to use, write a data loading and cleaning function, and create a spending analysis function.
 
-**AI's First Response:**
-```python
-df.groupby('Category')['Amount'].agg({'sum','mean','count'}).round(2)
-```
+**AI Response Summary:**  
+AI helped confirm that `sample_transactions.csv` had the required columns: `Date`, `Amount`, `Category`, and `Description`. It then helped create the `load_and_clean_transaction_data()` function and the `analyze_spending_patterns()` function. These functions load the CSV, clean dates and amounts, validate required columns, separate refunds, calculate net expenses, group spending by category, and identify the largest spending category.
 
-**My Critique:** "This code is unclear and doesn't handle dollar signs. Can you make it more readable with business-friendly variable names and add data cleaning?"
+**My Critique/Improvement:**  
+I checked the notebook output rather than assuming the generated code was correct. The refund logic needed adjustment because refunds were initially at risk of being treated as normal expenses or being subtracted twice. I reviewed the figures and kept the final logic consistent with the dataset, where all amounts are stored as positive values.
 
-**AI's Improved Response:**
-```python
-# Clean amount data by removing dollar signs
-df['Amount_Clean'] = pd.to_numeric(df['Amount'].str.replace('$', ''), errors='coerce')
+**Result:**  
+The notebook now loads 25 transaction rows, calculates net expenses of `$1208.65`, identifies refunds of `$37.50`, and shows Groceries as the largest spending category at `$540.30`.
 
-# Calculate spending metrics by category
-spending_summary = df.groupby('Category')['Amount_Clean'].agg({
-    'Total_Spent': 'sum',
-    'Average_Amount': 'mean', 
-    'Transaction_Count': 'count'
-}).round(2)
-```
+**Reflection:**  
+This section helped me understand that successful code is not always correct code. The functions ran, but the financial interpretation still needed checking. I learned to compare outputs against the actual transaction data and to think carefully about how refunds should affect spending analysis.
 
-**Reflection:** I learned that AI's first response isn't always the best. By asking for clearer variable names and business context, I got much better code. This taught me to always review AI code and ask for improvements rather than accepting the first solution.
+## Entry 3 – CSV-Based RAG and hands-on-ai Chatbot Integration
 
----
+**Artifact:**  
+See `AI-EVIDENCE/session_03_rag_chatbot.md`.
 
-### Entry 3 – Business Context in AI Interactions
-**Artifact:** Screenshot of Gemini generating financial insights from data.
+**Context:**  
+I needed to connect the transaction data to the chatbot so that Budget Buddy could answer finance questions using relevant CSV information instead of giving generic advice.
 
-**Context:** I wanted AI to help generate business recommendations from spending analysis.
+**My Prompt:**  
+I asked AI to help place the RAG code in the correct notebook section, create a CSV-based retrieval function, improve the retrieval output, and integrate the retrieved transaction context with a hands-on-ai chatbot.
 
-**My Prompt:** "Based on this spending analysis showing Groceries: $450, Dining: $380, Coffee: $120, Transport: $95, create business insights and savings recommendations that sound professional for a personal finance app."
+**AI Response Summary:**  
+AI helped create the CSV-based RAG functions `retrieve_relevant_transactions()` and `create_transaction_context()`. The first retrieval version returned some unrelated rows for a grocery question, so AI helped improve the matching logic by handling singular and plural forms such as `grocery` and `groceries`. AI also helped replace the earlier local chatbot with a hands-on-ai chatbot that uses the transaction summary and retrieved CSV rows as prompt context.
 
-**AI Response:** Generated specific recommendations like "Consider meal planning to reduce dining expenses" and "Coffee purchases represent 8% of total spending - consider brewing at home."
+**My Critique/Improvement:**  
+I tested the RAG output and noticed that the first version was too broad because it included unrelated categories. I used this output to ask for a more accurate retrieval method. I also checked the hands-on-ai setup carefully because the first connection test could print a success message even when the returned response contained an error. After identifying the API key issue and restarting the notebook/app state, the hands-on-ai chatbot worked inside the Gradio interface.
 
-**Reflection:** When I include business context and specify the audience (personal finance app users), AI generates much more relevant and professional output. I learned that framing requests in business terms gets business-quality responses. Now I always think about who will read the output and what decisions they need to make.
+**Result:**  
+The project now includes CSV-based RAG and a hands-on-ai powered chatbot. For a grocery question, the RAG system retrieves grocery-related transactions from the CSV and the chatbot uses that context to produce a more relevant finance response.
 
----
+**Reflection:**  
+This section helped me understand why RAG matters. Without CSV context, the chatbot could only give general advice. With retrieved transaction rows and a spending summary, the chatbot can refer to actual categories, amounts, and examples from the user’s data. I also learned that external AI integration needs careful testing because connection issues, API key mistakes, and stale notebook state can all affect the result.
 
-### Entry 4 – Data Quality and Edge Cases
-**Artifact:** Screenshot of debugging session with Claude about handling messy CSV data.
+## Entry 4 – Custom Tool, Gradio Interface, and Testing
 
-**Context:** My CSV had negative amounts (refunds) and missing values that broke my calculations.
+**Artifact:**  
+See `AI-EVIDENCE/session_04_gradio_tool_testing.md`.
 
-**My Problem:** "My spending analysis is giving wrong totals because some amounts are negative (refunds) and some cells are empty."
+**Context:**  
+I needed to turn the separate Budget Buddy functions into a complete application with a custom financial tool, an interactive interface, and meaningful tests.
 
-**AI Solution:** Helped me add data validation:
-```python
-# Handle refunds and missing data appropriately
-df_clean = df.dropna(subset=['Amount_Clean'])
-positive_spending = df_clean[df_clean['Amount_Clean'] > 0]
-refunds = df_clean[df_clean['Amount_Clean'] < 0]
-```
+**My Prompt:**  
+I asked AI to help create a custom savings goal tool, connect the analysis and chatbot functions into a Gradio interface, and write tests for both normal use and error cases.
 
-**Reflection:** AI helped me think about real-world data issues I hadn't considered. I learned that business data is always messy and I need to ask AI specifically about edge cases like refunds, missing values, and invalid entries. This makes my finance assistant more robust for actual use.
+**AI Response Summary:**  
+AI helped create the `calculate_savings_goal()` tool, the `run_budget_buddy_interface()` backend function, and the Gradio interface. The interface lets users upload a CSV, enter monthly income, ask a finance question, enter savings goal details, and view three outputs: spending insights, chatbot response, and savings goal result. AI also helped replace weak placeholder integration tests with tests that check the full application pipeline.
 
----
+**My Critique/Improvement:**  
+I tested the Gradio interface directly and confirmed that all three output boxes filled correctly. I also checked whether some test/demo cells were redundant and focused on keeping the meaningful tests. When the chatbot was changed to use hands-on-ai, I updated the tests so they checked for a valid response rather than relying on exact wording that could vary.
 
-## Advanced Integration Examples
+**Result:**  
+The final notebook includes a working Gradio app, a custom savings goal calculator, CSV-based RAG, hands-on-ai chatbot integration, and passing tests. The notebook was also tested with “Run All,” and no issues appeared.
 
-### Entry 5 – Combining Multiple AI Tools
-**Artifact:** Screenshot showing integration of hands-on-ai chat with pandas analysis.
+**Reflection:**  
+This section helped me understand the difference between separate functions and an integrated application. The project only became a full assistant once the analysis, chatbot, RAG context, savings tool, and Gradio interface worked together. I also learned that testing should include both normal workflows and error cases, because users may upload bad files or enter invalid values.
 
-**Context:** I wanted to create a chatbot that could answer questions about spending data.
+## Entry 5 – Documentation, README, and Final Cleanup
 
-**My Approach:** Used AI to help me combine CSV analysis with hands-on-ai chat functionality.
+**Artifact:**  
+See `AI-EVIDENCE/session_05_documentation_final_cleanup.md`.
 
-**Key Learning:** AI helped me structure the integration, but I had to understand the business logic to make it useful. The chatbot needed to understand financial concepts, not just execute code.
+**Context:**  
+I needed to clean up the notebook and README so that they accurately described the completed Budget Buddy project rather than the original starter template.
 
-**Reflection:** Integrating multiple technologies requires understanding how each piece serves the business purpose. AI can generate technical integration code, but I need to guide it toward business value.
+**My Prompt:**  
+I asked AI to review the notebook and README for inconsistencies, redundant code, outdated wording, and anything that no longer matched the final implementation.
 
----
+**AI Response Summary:**  
+AI identified several documentation and cleanup issues. The README still looked like the starter template and needed to be rewritten around Budget Buddy. Some wording still described rule-based chatbot logic even though the chatbot had been updated to use `hands-on-ai`. The notebook also had some template-style or outdated wording, including references to document retrieval instead of CSV-based transaction retrieval. AI also helped clarify how to use the six-step methodology as one process for the whole project rather than repeating it for every function.
 
-### Entry 6 – Professional Error Handling
-**Artifact:** Code snippet showing error handling for file uploads.
+**My Critique/Improvement:**  
+I focused on the changes that affected clarity and consistency, rather than trying to rewrite every small markdown issue. I checked whether the notebook still ran after the changes and asked AI to focus mainly on redundant code. I removed or corrected parts that could confuse the marker, such as old sample-data code and outdated descriptions.
 
-**Context:** I needed my Gradio interface to handle bad CSV files gracefully.
+**Result:**  
+The README became specific to the completed Budget Buddy assistant. The notebook methodology section was rewritten around the actual project, the RAG wording was updated to reflect CSV-based retrieval, redundant starter code was removed, and the notebook ran successfully from top to bottom.
 
-**AI Suggestion:** Generated try/catch blocks with business-appropriate error messages:
-```python
-try:
-    df = pd.read_csv(file.name)
-    # Analysis code...
-except FileNotFoundError:
-    return "Please upload a valid CSV file."
-except pd.errors.EmptyDataError:
-    return "The uploaded file appears to be empty. Please check your data."
-```
-
-**Reflection:** AI helped me think about user experience, not just technical functionality. Good error messages help users understand what went wrong and how to fix it. This is crucial for business applications.
-
----
-
-## AI Collaboration Best Practices I've Learned
-
-### 🎯 Effective Prompting Strategies
-1. **Always provide business context**: "I'm building a finance assistant for..."
-2. **Specify data structure**: "My CSV has columns X, Y, Z with these data types..."  
-3. **Request professional formatting**: "Format output for business presentation"
-4. **Ask for comments**: "Include clear comments explaining the business logic"
-
-### 🤔 Critique Questions I Always Ask
-- "Does this handle edge cases like negative amounts or missing data?"
-- "Are the variable names clear for a business context?"
-- "How would I explain this code to a non-technical manager?"
-- "What assumptions is this code making about my data?"
-
-### 🔄 Iterative Improvement Process
-1. **Get basic working code** from AI
-2. **Test with real data** and find issues  
-3. **Ask AI to fix specific problems** with context
-4. **Simplify complex solutions** for maintainability
-5. **Add business-appropriate formatting** and error handling
-
-### 📊 Business Value Focus
-- Always connect code back to business decisions
-- Format outputs for non-technical users
-- Include actionable insights, not just data summaries
-- Consider the end user's needs and context
-
----
-
-## 📝 Documentation Template for Your Entries
-
-Use this format for consistent diary entries:
-
-```markdown
-### Entry [Number] – [Descriptive Title]
-**Artifact:** [Screenshot/code snippet/GIF of AI interaction]
-
-**Context:** [One sentence: what you were trying to achieve]
-
-**My Prompt:** "[Your exact prompt to AI]"
-
-**AI Response Summary:** [Brief description of what AI provided]
-
-**My Critique/Improvement:** [How you modified or improved the AI's suggestion]
-
-**Result:** [What you ended up with and why it's better]
-
-**Reflection:** [What you learned about AI collaboration, business programming, or problem-solving]
-```
-
----
-
-✅ **Remember**: Document your AI collaboration throughout your project development. Each entry should show learning and improvement, not just successful interactions. Show how you direct AI like a junior developer to create business-appropriate solutions.
+**Reflection:**  
+This section showed me that a programming project is not finished just because the code works. The documentation also needs to explain what the project does, how it works, and how it should be run. I learned that cleanup is important because leftover template code or outdated descriptions can make a working project look inconsistent or unfinished.
 
