@@ -115,7 +115,9 @@ The Gradio interface lets the user:
 /starter_notebook.ipynb     ← Main Smart Finance Assistant notebook
 /sample_transactions.csv    ← Sample transaction dataset
 /diary.md                   ← Developer diary / AI collaboration documentation
-/AI-EVIDENCE/          ← AI evidence snippets or screenshots, if used
+/AI-EVIDENCE/               ← detailed summaries of AI interaction with prompts and outputs
+/.gitignore/                ← file to ignore the venv local kernel environment in git pushes
+/LICENSE/                   ← University assignment license
 ```
 
 ---
